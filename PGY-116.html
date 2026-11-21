@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f6">
+  <meta name="description" content="116 學年度 PGY 說明會資訊，依日期、分區與參與形式查詢及排序。">
+  <title>PGY 說明會｜116 學年度</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f8f6;
+      --paper: #ffffff;
+      --ink: #202923;
+      --muted: #6f7771;
+      --line: #e3e8e3;
+      --tint: #f1f5f1;
+      --accent: #265745;
+      --accent-dark: #194335;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .masthead {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-inner {
+      max-width: 1500px;
+      margin: auto;
+      padding: 17px 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      font-size: 15px;
+      font-weight: 760;
+      letter-spacing: -.02em;
+    }
+    .brand span {
+      color: #969f98;
+      font-weight: 400;
+      margin-left: 7px;
+      letter-spacing: 0;
+    }
+    .masthead-year {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 540;
+    }
+    .page {
+      max-width: 1500px;
+      margin: auto;
+      padding: 55px 52px 76px;
+    }
+    .heading-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .kicker {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      margin: 0 0 10px;
+    }
+    h1 {
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 730;
+      line-height: 1.23;
+      letter-spacing: -.05em;
+      margin: 0;
+    }
+    .heading-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 13px 0 0;
+    }
+    .total {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      padding-bottom: 5px;
+    }
+    .total strong { font-size: 22px; color: var(--ink); font-weight: 720; margin-right: 3px; font-variant-numeric: tabular-nums; }
+    .controls {
+      margin-top: 39px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .region-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .region-button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: #65716a;
+      min-width: 52px;
+      min-height: 40px;
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .region-button:hover { background: #e9eeea; color: var(--ink); }
+    .region-button[aria-pressed="true"] {
+      background: var(--ink);
+      color: white;
+    }
+    .secondary-controls {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .control-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .control-wrap label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 580;
+    }
+    .field {
+      width: 100%;
+      height: 42px;
+      border: 1px solid #d9e0da;
+      background: var(--paper);
+      border-radius: 8px;
+      padding: 0 12px;
+      color: var(--ink);
+      font-size: 13px;
+      transition: border-color .15s;
+    }
+    .field:hover { border-color: #b6c4b9; }
+    .field:focus { outline: 2px solid rgba(38,87,69,.17); outline-offset: 0; border-color: var(--accent); }
+    .search-wrap { width: 220px; }
+    .sort-wrap { width: 205px; }
+    .mode-wrap { width: 136px; }
+    .list-top {
+      border-top: 1px solid var(--line);
+      padding-top: 23px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .list-top h2 { font-size: 15px; margin: 0; font-weight: 710; }
+    .results-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    .table-shell {
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-top: 15px;
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      table-layout: fixed;
+      font-size: 13.5px;
+      text-align: left;
+    }
+    col.col-date { width: 11%; }
+    col.col-start { width: 8%; }
+    col.col-end { width: 8%; }
+    col.col-hospital { width: 23%; }
+    col.col-mode { width: 11%; }
+    col.col-source { width: 10%; }
+    col.col-region { width: 7%; }
+    col.col-venue { width: 22%; }
+    thead th {
+      font-size: 12px;
+      color: #727c74;
+      background: #f6f8f5;
+      font-weight: 650;
+      padding: 17px 14px;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    thead th:first-child, tbody td:first-child { padding-left: 22px; }
+    thead th:last-child, tbody td:last-child { padding-right: 22px; }
+    tbody td {
+      vertical-align: top;
+      padding: 19px 14px;
+      border-bottom: 1px solid #edf0ed;
+      overflow-wrap: anywhere;
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fbfcfb; }
+    .date, .time {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+    }
+    .hospital { font-weight: 650; line-height: 1.6; }
+    .venue { color: #555e58; line-height: 1.65; }
+    .mode { color: #48554d; }
+    .region { color: #56645b; }
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 650;
+      border-bottom: 1px solid #b9cfc0;
+      padding-bottom: 1px;
+      white-space: nowrap;
+    }
+    .source-link:hover { color: var(--accent-dark); border-color: var(--accent-dark); }
+    .source-link svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.9; }
+    .source-none { color: #98a19a; font-size: 13px; }
+    .mobile-list { display: none; }
+    .empty {
+      padding: 65px 18px;
+      text-align: center;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-top: 15px;
+    }
+    .empty h3 { margin: 0; font-size: 17px; }
+    .empty p { margin: 6px 0 18px; color: var(--muted); font-size: 13px; }
+    .reset {
+      background: white; border: 1px solid #bbc7bd;
+      padding: 8px 18px; border-radius: 8px; color: var(--accent);
+      font-size: 13px; font-weight: 650;
+    }
+    .reset:hover { background: var(--tint); }
+    .footnote {
+      margin: 18px 0 0;
+      font-size: 12px;
+      color: #89928a;
+    }
+    @media (max-width: 1320px) {
+      .controls { align-items: stretch; }
+      .secondary-controls { justify-content: flex-start; }
+      thead th { padding-left: 10px; padding-right: 10px; }
+      tbody td { padding-left: 10px; padding-right: 10px; }
+      thead th:first-child, tbody td:first-child { padding-left: 16px; }
+    }
+    @media (max-width: 930px) {
+      .masthead-inner { padding: 16px 22px; }
+      .page { padding: 36px 22px 50px; }
+      .controls { gap: 22px; }
+      .region-controls { width: 100%; }
+      .secondary-controls { width: 100%; }
+      .search-wrap { flex: 1 1 240px; }
+      .sort-wrap { flex: 1 1 200px; }
+      .mode-wrap { flex: 1 1 150px; }
+      .table-shell { display: none; }
+      .mobile-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+      .event-card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 21px 21px 19px;
+      }
+      .card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .card-date { color: var(--accent); font-size: 13px; font-weight: 750; font-variant-numeric: tabular-nums; }
+      .card-time { display: flex; gap: 16px; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 590; }
+      .card-time span small { color: #909991; font-weight: 500; margin-right: 5px; font-size: 11px; }
+      .event-card h3 { font-size: 17px; letter-spacing: -.015em; line-height: 1.55; margin: 10px 0 7px; }
+      .card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 15px; }
+      .card-tags span {
+        background: var(--tint);
+        color: #516457;
+        font-size: 12px;
+        padding: 3px 9px;
+        border-radius: 5px;
+      }
+      .card-detail {
+        border-top: 1px solid #f0f2ef;
+        padding: 11px 0 0;
+        margin: 0 0 9px;
+        display: grid;
+        grid-template-columns: 68px 1fr;
+        gap: 12px;
+        font-size: 13px;
+      }
+      .card-detail:last-child { margin-bottom: 0; }
+      .card-detail dt { color: #8a948c; }
+      .card-detail dd { margin: 0; color: #465149; overflow-wrap: anywhere; }
+    }
+    @media (max-width: 560px) {
+      .masthead-inner { padding: 14px 16px; }
+      .page { padding: 28px 16px 42px; }
+      h1 { font-size: 31px; }
+      .heading-row { align-items: flex-start; }
+      .heading-sub { font-size: 13px; }
+      .total { padding-top: 22px; }
+      .total strong { font-size: 20px; }
+      .controls { margin-top: 29px; gap: 17px; }
+      .region-controls { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 2px; }
+      .region-controls::-webkit-scrollbar { display: none; }
+      .region-button { min-width: 48px; white-space: nowrap; padding: 8px 13px; }
+      .secondary-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; }
+      .search-wrap { width: 100%; grid-column: 1 / -1; }
+      .sort-wrap, .mode-wrap { width: auto; min-width: 0; }
+      .list-top { margin-top: 21px; }
+      .event-card { padding: 18px 16px 17px; }
+      .card-time { gap: 12px; }
+      .card-date { font-size: 13px; }
+      .card-detail { grid-template-columns: 62px 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .region-button, .field { transition: none; }
+    }
+    @media print {
+      body { background: white; }
+      .masthead, .controls, .footnote { display: none !important; }
+      .page { padding: 12px; }
+      .table-shell { display: block; overflow: visible; }
+      .mobile-list { display: none; }
+      table { font-size: 10px; }
+      thead th, tbody td { padding: 6px !important; }
+      tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">PGY <span>INFO</span></div>
+      <div class="masthead-year">116 學年度</div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="heading-row" aria-label="頁面標題">
+      <div>
+        <p class="kicker">2026 / 11 — 12</p>
+        <h1>PGY 說明會場次</h1>
+        <p class="heading-sub">快速查找各醫院說明會日期、地點與公告。</p>
+      </div>
+      <div class="total"><strong id="totalCount">38</strong> 場</div>
+    </section>
+
+    <section class="controls" aria-label="搜尋與排序">
+      <div class="region-controls" role="group" aria-label="依分區篩選">
+        <button type="button" class="region-button" data-region="全部" aria-pressed="true">全部</button>
+        <button type="button" class="region-button" data-region="北部" aria-pressed="false">北部</button>
+        <button type="button" class="region-button" data-region="中部" aria-pressed="false">中部</button>
+        <button type="button" class="region-button" data-region="南部" aria-pressed="false">南部</button>
+        <button type="button" class="region-button" data-region="東部" aria-pressed="false">東部</button>
+        <button type="button" class="region-button" data-region="線上" aria-pressed="false">線上</button>
+      </div>
+      <div class="secondary-controls">
+        <div class="control-wrap search-wrap">
+          <label for="searchInput">搜尋</label>
+          <input class="field" id="searchInput" type="search" autocomplete="off" placeholder="醫院、場次或會場地點">
+        </div>
+        <div class="control-wrap mode-wrap">
+          <label for="modeSelect">參與形式</label>
+          <select class="field" id="modeSelect">
+            <option value="全部">全部形式</option>
+            <option value="實體">實體</option>
+            <option value="實體＋線上">實體＋線上</option>
+            <option value="線上">線上</option>
+          </select>
+        </div>
+        <div class="control-wrap sort-wrap">
+          <label for="sortSelect">排序方式</label>
+          <select class="field" id="sortSelect">
+            <option value="date-asc">日期：近 → 遠</option>
+            <option value="date-desc">日期：遠 → 近</option>
+            <option value="region-ns">分區：北 → 南</option>
+            <option value="region-sn">分區：南 → 北</option>
+            <option value="start-asc">開始時間：早 → 晚</option>
+            <option value="start-desc">開始時間：晚 → 早</option>
+            <option value="end-asc">結束時間：早 → 晚</option>
+            <option value="hospital-asc">醫院：名稱排序</option>
+            <option value="mode-asc">參與形式排序</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="listHeading">
+      <div class="list-top">
+        <h2 id="listHeading">場次列表</h2>
+        <span class="results-count" id="resultCount" aria-live="polite"></span>
+      </div>
+      <div class="table-shell" id="tableShell">
+        <table>
+          <colgroup>
+            <col class="col-date"><col class="col-start"><col class="col-end"><col class="col-hospital">
+            <col class="col-mode"><col class="col-source"><col class="col-region"><col class="col-venue">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">日期／星期</th>
+              <th scope="col">開始時間</th>
+              <th scope="col">結束時間</th>
+              <th scope="col">醫院及場次</th>
+              <th scope="col">參與形式</th>
+              <th scope="col">公告來源</th>
+              <th scope="col">分區</th>
+              <th scope="col">會場地點</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="mobile-list" id="mobileList"></div>
+      <div class="empty" id="emptyState" hidden>
+        <h3>沒有符合條件的場次</h3>
+        <p>可調整搜尋關鍵字或篩選條件。</p>
+        <button type="button" id="resetButton" class="reset">清除篩選</button>
+      </div>
+      <p class="footnote">日期與時間依原始 Excel 資料呈現；如有異動，請以各主辦單位最新公告為準。</p>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+    const events = [{"date":"2026-11-19","day":"四","start":"18:00","end":"20:15","hospital":"臺北榮總（台北場①）","mode":"實體","source":"https://med.site.nthu.edu.tw/var/file/551/1551/img/4264/692232661.jpg","region":"北部","venue":"臺北榮總（官方海報原列致德樓第一會議室；另有場地更動訊息）"},{"date":"2026-11-21","day":"六","start":"09:30","end":"11:30","hospital":"大林慈濟醫院（台中場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/655","region":"中部","venue":"台中金典酒店14樓春櫻廳"},{"date":"2026-11-21","day":"六","start":"10:00","end":"12:00","hospital":"新竹臺大分院新竹醫院","mode":"實體","source":"https://www.hch.gov.tw/?aid=708&iid=367&page_name=detail&pid=0","region":"北部","venue":"新竹臺大分院新竹醫院"},{"date":"2026-11-21","day":"六","start":"10:00","end":"12:15","hospital":"臺北榮總（台北場②）","mode":"實體","source":"https://med.site.nthu.edu.tw/var/file/551/1551/img/4264/692232661.jpg","region":"北部","venue":"臺北榮總介壽堂禮堂"},{"date":"2026-11-21","day":"六","start":"13:30","end":"未公告","hospital":"台灣醫學教育學會 PGY選配說明會","mode":"線上","source":"","region":"線上","venue":"Webex（原表資訊）"},{"date":"2026-11-22","day":"日","start":"09:30","end":"11:30","hospital":"臺北榮總（高雄場）","mode":"實體","source":"https://med.site.nthu.edu.tw/var/file/551/1551/img/4264/692232661.jpg","region":"南部","venue":"高雄商旅 Urban Hotel 33"},{"date":"2026-11-22","day":"日","start":"14:30","end":"16:30","hospital":"臺北榮總（台中場）","mode":"實體","source":"https://med.site.nthu.edu.tw/var/file/551/1551/img/4264/692232661.jpg","region":"中部","venue":"永豐棧酒店 Tempus Hotel"},{"date":"2026-11-29","day":"日","start":"13:30","end":"17:00","hospital":"奇美醫院","mode":"實體","source":"https://sub.chimei.org.tw/57200/","region":"南部","venue":"奇美醫院第五醫療大樓5樓國際會議廳"},{"date":"2026-12-01","day":"二","start":"13:30","end":"未公告","hospital":"台灣醫學教育學會 PGY選配說明會","mode":"線上","source":"","region":"線上","venue":"Webex（原表資訊）"},{"date":"2026-12-04","day":"五","start":"17:30","end":"未公告","hospital":"臺大醫院總院／新竹臺大／雲林臺大聯合說明會","mode":"實體＋線上","source":"https://cmumd.cmu.edu.tw/zh-hant/node/658","region":"北部","venue":"臺大醫學院（確切會議室見附件）"},{"date":"2026-12-05","day":"六","start":"09:00","end":"11:00","hospital":"彰化秀傳紀念醫院","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/656","region":"中部","venue":"彰化秀傳南平大樓1樓文創會議室"},{"date":"2026-12-05","day":"六","start":"09:30","end":"11:30","hospital":"臺中榮總（場次①）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/648","region":"中部","venue":"臺中榮總研究大樓2F第一會議室"},{"date":"2026-12-05","day":"六","start":"09:30","end":"11:30","hospital":"大林慈濟醫院（高雄場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/655","region":"南部","venue":"高雄萬豪酒店10樓皇喜會議室10D"},{"date":"2026-12-05","day":"六","start":"09:40","end":"11:30","hospital":"馬偕紀念醫院（台北上午場）","mode":"實體","source":"https://www.mmc.edu.tw/medicine/xmdoc/cont?sid=0Q309393749660947902&xsmsid=0P017302902531729048","region":"北部","venue":"台北馬偕平安樓15樓階梯講堂"},{"date":"2026-12-05","day":"六","start":"10:00","end":"未公告","hospital":"國泰綜合醫院","mode":"實體","source":"","region":"北部","venue":"未取得116年度公告"},{"date":"2026-12-05","day":"六","start":"13:30","end":"未公告","hospital":"台北慈濟醫院","mode":"實體＋線上","source":"https://cmumd.cmu.edu.tw/zh-hant/node/657","region":"北部","venue":"台北慈濟醫院（會議室待確認）"},{"date":"2026-12-05","day":"六","start":"13:30","end":"16:00","hospital":"臺北市立聯合醫院（仁愛院區）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/660","region":"北部","venue":"仁愛院區醫療大樓8樓醫研中心講堂"},{"date":"2026-12-05","day":"六","start":"13:30","end":"15:20","hospital":"馬偕紀念醫院（台北下午場）","mode":"實體","source":"https://www.mmc.edu.tw/medicine/xmdoc/cont?sid=0Q309393749660947902&xsmsid=0P017302902531729048","region":"北部","venue":"台北馬偕平安樓15樓階梯講堂"},{"date":"2026-12-05","day":"六","start":"14:00","end":"16:00","hospital":"嘉義基督教醫院（台北場）","mode":"實體","source":"https://www.cych.org.tw/news_detail.aspx?ID=4835","region":"北部","venue":"北科大集思會議中心貝塔廳"},{"date":"2026-12-06","day":"日","start":"10:00","end":"12:00","hospital":"亞東紀念醫院","mode":"實體＋線上","source":"https://depart.femh.org.tw/meded/new/News/News.html","region":"北部","venue":"亞東紀念醫院南棟14樓國際會議廳"},{"date":"2026-12-06","day":"日","start":"13:30","end":"16:30","hospital":"中國醫藥大學附設醫院（台北場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/653","region":"北部","venue":"台北六福萬怡酒店"},{"date":"2026-12-06","day":"日","start":"14:00","end":"17:00","hospital":"新光醫院","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/654","region":"北部","venue":"新光醫院火獅樓B3同新園會議室"},{"date":"2026-12-07","day":"一","start":"18:00","end":"20:00","hospital":"大林慈濟醫院（花蓮場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/655","region":"東部","venue":"花蓮潔西艾美度假酒店多功能廳"},{"date":"2026-12-09","day":"三","start":"17:00","end":"未公告","hospital":"成大醫院","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/650","region":"南部","venue":"成大醫院（詳細地點見主辦公告）"},{"date":"2026-12-10","day":"四","start":"18:30","end":"20:30","hospital":"臺中榮總（場次②）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/648","region":"中部","venue":"臺中榮總研究大樓1F第二會議室"},{"date":"2026-12-11","day":"五","start":"18:00","end":"20:30","hospital":"高雄榮總","mode":"實體＋線上","source":"https://org.vghks.gov.tw/erli/News_Content.aspx?n=D206B30E3B7EE475&s=F8E55BFF25CF1463&sms=2371E7FF85B1FE13","region":"南部","venue":"高雄榮總急診大樓6樓第5會議室"},{"date":"2026-12-12","day":"六","start":"08:30","end":"12:15","hospital":"北醫附醫／萬芳／雙和聯合說明會","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/664","region":"北部","venue":"萬芳醫院6樓國際會議廳"},{"date":"2026-12-12","day":"六","start":"09:00","end":"11:00","hospital":"林口長庚紀念醫院","mode":"實體","source":"https://med.site.nthu.edu.tw/var/file/551/1551/img/4264/628035.jpg","region":"北部","venue":"長庚國際會議中心3樓國際會議廳"},{"date":"2026-12-12","day":"六","start":"09:30","end":"12:00","hospital":"嘉義基督教醫院（嘉義場）","mode":"實體","source":"https://www.cych.org.tw/news_detail.aspx?ID=4835","region":"南部","venue":"嘉義基督教醫院路加堂B1第二講堂"},{"date":"2026-12-12","day":"六","start":"10:50","end":"未公告","hospital":"童綜合醫院","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/661","region":"中部","venue":"台中金典酒店10樓喆園2廳"},{"date":"2026-12-12","day":"六","start":"13:30","end":"16:30","hospital":"中國醫藥大學附設醫院（台南場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/653","region":"南部","venue":"台南老爺行旅"},{"date":"2026-12-12","day":"六","start":"14:00","end":"16:00","hospital":"高雄醫學大學附設中和紀念醫院","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/663","region":"南部","venue":"高醫啟川大樓6樓第一會議室"},{"date":"2026-12-13","day":"日","start":"13:30","end":"16:30","hospital":"中國醫藥大學附設醫院（高雄場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/653","region":"南部","venue":"高雄洲際酒店"},{"date":"2026-12-19","day":"六","start":"09:00","end":"12:00","hospital":"義大醫院","mode":"實體","source":"https://www.edah.org.tw/DefaultNewsPopUp/A/2/2419","region":"南部","venue":"高雄萬豪酒店8F萬享宴會廳A廳"},{"date":"2026-12-19","day":"六","start":"09:30","end":"11:30","hospital":"大林慈濟醫院（嘉義場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/655","region":"南部","venue":"嘉義慈濟診所"},{"date":"2026-12-19","day":"六","start":"09:40","end":"11:30","hospital":"馬偕紀念醫院（台中場）","mode":"實體","source":"https://www.mmc.edu.tw/medicine/xmdoc/cont?sid=0Q309393749660947902&xsmsid=0P017302902531729048","region":"中部","venue":"台中金典酒店14F秋冬松廳"},{"date":"2026-12-19","day":"六","start":"14:40","end":"16:30","hospital":"馬偕紀念醫院（高雄場）","mode":"實體","source":"https://www.mmc.edu.tw/medicine/xmdoc/cont?sid=0Q309393749660947902&xsmsid=0P017302902531729048","region":"南部","venue":"H2O水京棧國際酒店2樓宴會廳B"},{"date":"2026-12-20","day":"日","start":"12:00","end":"15:00","hospital":"中國醫藥大學附設醫院（台中場）","mode":"實體","source":"https://cmumd.cmu.edu.tw/zh-hant/node/653","region":"中部","venue":"台中李方艾美酒店"}];
+    const state = { region: "全部", mode: "全部", sort: "date-asc", query: "" };
+    const northToSouth = ["北部", "中部", "南部", "東部", "線上"];
+    const southToNorth = ["南部", "中部", "北部", "東部", "線上"];
+    const modeOrder = ["實體", "實體＋線上", "線上"];
+    const collator = new Intl.Collator("zh-Hant-TW", { numeric: true, sensitivity: "base" });
+    const $ = id => document.getElementById(id);
+    const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, ch =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+    const displayDate = e => `${Number(e.date.slice(5, 7))}/${e.date.slice(8, 10)}（${e.day}）`;
+    const orderDate = (a, b) => a.date.localeCompare(b.date) || timeCompare(a.start, b.start);
+    function timeCompare(a, b) {
+      const missing = value => !/^\d{2}:\d{2}$/.test(value);
+      if (missing(a) && missing(b)) return 0;
+      if (missing(a)) return 1;
+      if (missing(b)) return -1;
+      return a.localeCompare(b);
+    }
+    function sourceLink(e) {
+      if (!/^https?:\/\//i.test(e.source)) return '<span class="source-none">暫無公告</span>';
+      return `<a class="source-link" href="${escapeHTML(e.source)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHTML(e.hospital)}：開啟公告（新分頁）">查看公告 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>`;
+    }
+    function timeCompareDescending(a, b) {
+      const knownA = /^\d{2}:\d{2}$/.test(a);
+      const knownB = /^\d{2}:\d{2}$/.test(b);
+      if (!knownA && !knownB) return 0;
+      if (!knownA) return 1;
+      if (!knownB) return -1;
+      return b.localeCompare(a);
+    }
+    function sorting(a, b) {
+      switch (state.sort) {
+        case "date-desc": return -orderDate(a, b);
+        case "region-ns": return (northToSouth.indexOf(a.region) - northToSouth.indexOf(b.region)) || orderDate(a,b);
+        case "region-sn": return (southToNorth.indexOf(a.region) - southToNorth.indexOf(b.region)) || orderDate(a,b);
+        case "start-asc": return timeCompare(a.start, b.start) || orderDate(a,b);
+        case "start-desc": return timeCompareDescending(a.start, b.start) || orderDate(a,b);
+        case "end-asc": return timeCompare(a.end, b.end) || orderDate(a,b);
+        case "hospital-asc": return collator.compare(a.hospital, b.hospital) || orderDate(a,b);
+        case "mode-asc": return modeOrder.indexOf(a.mode) - modeOrder.indexOf(b.mode) || orderDate(a,b);
+        default: return orderDate(a,b);
+      }
+    }
+    function filteredEvents() {
+      const q = state.query.trim().normalize("NFKC").toLocaleLowerCase("zh-Hant-TW");
+      return events.filter(e => {
+        if (state.region !== "全部" && e.region !== state.region) return false;
+        if (state.mode !== "全部" && e.mode !== state.mode) return false;
+        if (!q) return true;
+        return [e.hospital, e.venue, e.region, e.mode, displayDate(e), e.date]
+          .join(" ").normalize("NFKC").toLocaleLowerCase("zh-Hant-TW").includes(q);
+      }).sort(sorting);
+    }
+    function desktopRow(e) {
+      return `<tr>
+        <td class="date"><time datetime="${escapeHTML(e.date)}">${escapeHTML(displayDate(e))}</time></td>
+        <td class="time">${escapeHTML(e.start)}</td>
+        <td class="time">${escapeHTML(e.end)}</td>
+        <td class="hospital">${escapeHTML(e.hospital)}</td>
+        <td class="mode">${escapeHTML(e.mode)}</td>
+        <td>${sourceLink(e)}</td>
+        <td class="region">${escapeHTML(e.region)}</td>
+        <td class="venue">${escapeHTML(e.venue)}</td>
+      </tr>`;
+    }
+    function mobileCard(e) {
+      return `<article class="event-card">
+        <div class="card-top">
+          <time class="card-date" datetime="${escapeHTML(e.date)}">${escapeHTML(displayDate(e))}</time>
+          <div class="card-time">
+            <span><small>開始</small>${escapeHTML(e.start)}</span>
+            <span><small>結束</small>${escapeHTML(e.end)}</span>
+          </div>
+        </div>
+        <h3>${escapeHTML(e.hospital)}</h3>
+        <div class="card-tags"><span>${escapeHTML(e.region)}</span><span>${escapeHTML(e.mode)}</span></div>
+        <dl class="card-detail"><dt>會場地點</dt><dd>${escapeHTML(e.venue)}</dd></dl>
+        <dl class="card-detail"><dt>公告來源</dt><dd>${sourceLink(e)}</dd></dl>
+      </article>`;
+    }
+    function render() {
+      const matched = filteredEvents();
+      $("totalCount").textContent = events.length.toLocaleString("zh-TW");
+      $("resultCount").textContent = `顯示 ${matched.length} / ${events.length} 場`;
+      $("tableBody").innerHTML = matched.map(desktopRow).join("");
+      $("mobileList").innerHTML = matched.map(mobileCard).join("");
+      $("tableShell").hidden = !matched.length;
+      $("mobileList").hidden = !matched.length;
+      $("emptyState").hidden = !!matched.length;
+      document.querySelectorAll(".region-button").forEach(btn => {
+        btn.setAttribute("aria-pressed", String(btn.dataset.region === state.region));
+      });
+    }
+    function reset() {
+      state.region = "全部";
+      state.mode = "全部";
+      state.sort = "date-asc";
+      state.query = "";
+      $("searchInput").value = "";
+      $("modeSelect").value = "全部";
+      $("sortSelect").value = "date-asc";
+      render();
+    }
+    document.querySelectorAll(".region-button").forEach(btn =>
+      btn.addEventListener("click", () => { state.region = btn.dataset.region; render(); }));
+    $("searchInput").addEventListener("input", event => { state.query = event.target.value; render(); });
+    $("modeSelect").addEventListener("change", event => { state.mode = event.target.value; render(); });
+    $("sortSelect").addEventListener("change", event => { state.sort = event.target.value; render(); });
+    $("resetButton").addEventListener("click", reset);
+    render();
+  </script>
+</body>
+</html>
